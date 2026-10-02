@@ -49,16 +49,22 @@ function actualizarResto(totalResto) {
   const clase = (v) => (v >= 0 ? "pos" : "neg");
 
   for (let k = 1; k <= N; k++) {
-    acarreoS += sueldoS - cuota / 2;
-    acarreoF += sueldoF - cuota / 2;
-    pendiente = Math.max(0, pendiente - cuota);
+    const disponibleS = Math.max(0, acarreoS + sueldoS);
+    const disponibleF = Math.max(0, acarreoF + sueldoF);
+    const disponibleTotal = disponibleS + disponibleF;
+    const pagoMes = Math.min(cuota, disponibleTotal);
+    const aporteS = disponibleTotal ? pagoMes * disponibleS / disponibleTotal : 0;
+    const aporteF = pagoMes - aporteS;
+    acarreoS = Math.max(0, disponibleS - aporteS);
+    acarreoF = Math.max(0, disponibleF - aporteF);
+    pendiente = Math.max(0, pendiente - pagoMes);
     let fecha = "";
     if (inicio) {
       const d = new Date(inicio + "T00:00:00");
       d.setMonth(d.getMonth() + k - 1);
       fecha = d.toLocaleDateString("es-ES", { month: "short", year: "numeric" });
     }
-    html += `<tr><td>${k}</td><td>${fecha}</td><td>${Calc.eur(cuota)}</td><td>${Calc.eur(sueldoS)}</td><td>${Calc.eur(sueldoF)}</td>
+    html += `<tr><td>${k}</td><td>${fecha}</td><td>${Calc.eur(pagoMes)}</td><td>${Calc.eur(sueldoS)}</td><td>${Calc.eur(sueldoF)}</td>
       <td class="${clase(acarreoS)}">${Calc.eur(acarreoS)}</td>
       <td class="${clase(acarreoF)}">${Calc.eur(acarreoF)}</td>
       <td class="${clase(acarreoS + acarreoF)}">${Calc.eur(acarreoS + acarreoF)}</td>
