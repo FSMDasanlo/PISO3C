@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Piso 3C · Cuentas</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="top">
+    <h1>Piso 3C</h1>
+    <p>Control de pagos y financiación</p>
+  </header>
+
+  <main class="grid">
+
+    <!-- 1. DATOS PISO -->
+    <section class="card">
+      <h2><span class="num">1</span> Datos del piso</h2>
+      <div class="fields two">
+        <label>Planta <input type="text" id="planta" placeholder="3"></label>
+        <label>Bloque <input type="text" id="bloque" placeholder="C"></label>
+        <label>Importe líquido (€) <input type="number" id="liquido" step="0.01" min="0"></label>
+        <label>IVA (%) <input type="number" id="ivaPiso" step="0.01" min="0" value="10"></label>
+      </div>
+      <div class="result"><span>IVA</span><strong id="ivaPisoImporte">0,00 €</strong></div>
+      <div class="result total"><span>TOTAL</span><strong id="totalPiso">0,00 €</strong></div>
+    </section>
+
+    <!-- 2. ORIGEN DINERO -->
+    <section class="card">
+      <h2><span class="num">2</span> Origen del dinero</h2>
+      <div class="fields">
+        <label>Familia (€) <input type="number" id="familia" step="0.01" min="0"></label>
+        <label>Sandra (€) <input type="number" id="sandra" step="0.01" min="0"></label>
+        <label>Felipe (€) <input type="number" id="felipe" step="0.01" min="0"></label>
+      </div>
+      <div class="result total"><span>Total aportado</span><strong id="totalOrigen">0,00 €</strong></div>
+      <div class="result"><span>Pagos iniciales</span><strong id="origenNecesario">0,00 €</strong></div>
+      <div class="result"><span id="origenDifLabel">Diferencia</span><strong id="origenDif">0,00 €</strong></div>
+    </section>
+
+    <!-- 3. PAGOS INICIALES -->
+    <section class="card wide">
+      <h2><span class="num">3</span> Pagos iniciales</h2>
+      <div class="table-wrap">
+        <table class="pagos">
+          <thead>
+            <tr><th>Concepto</th><th>Fecha</th><th>% (resto: s/ pendiente)</th><th>Importe (€)</th><th>IVA (%)</th><th>Total</th></tr>
+          </thead>
+          <tbody>
+            <tr data-pago="arras">
+              <td>Arras</td>
+              <td><input type="date" data-f="fecha"></td>
+              <td class="muted">—</td>
+              <td><input type="number" data-f="importe" step="0.01" min="0"></td>
+              <td><input type="number" data-f="iva" step="0.01" min="0" value="10"></td>
+              <td class="total-cell" data-out="total">0,00 €</td>
+            </tr>
+            <tr data-pago="entrada">
+              <td>Entrada</td>
+              <td><input type="date" data-f="fecha"></td>
+              <td><input type="number" data-f="pct" step="0.01" min="0" value="15"></td>
+              <td class="calc" data-out="importe">0,00 €</td>
+              <td><input type="number" data-f="iva" step="0.01" min="0" value="10"></td>
+              <td class="total-cell" data-out="total">0,00 €</td>
+            </tr>
+            <tr data-pago="resto">
+              <td>Resto 2 años</td>
+              <td><input type="date" data-f="fecha"></td>
+              <td><input type="number" data-f="pct" step="0.01" min="0" value="15"></td>
+              <td class="calc" data-out="importe">0,00 €</td>
+              <td><input type="number" data-f="iva" step="0.01" min="0" value="10"></td>
+              <td class="total-cell" data-out="total">0,00 €</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr><td colspan="5">Total pagos iniciales</td><td class="total-cell" id="totalPagos">0,00 €</td></tr>
+          </tfoot>
+        </table>
+      </div>
+    </section>
+
+    <!-- 3b. RESTO 24 MESES -->
+    <section class="card wide">
+      <h2><span class="num">3</span> Resto 2 años: 24 pagos mensuales</h2>
+      <div class="fields two">
+        <label>Ahorro de Sandra para este pago (€) <input type="number" id="sandraAhorro" step="0.01" min="0"></label>
+        <label>Sueldo mensual de Sandra (€) <input type="number" id="sandraSueldo" step="0.01" min="0"></label>
+        <label>Ahorro de Felipe para este pago (€) <input type="number" id="felipeAhorro" step="0.01" min="0"></label>
+        <label>Sueldo mensual de Felipe (€) <input type="number" id="felipeSueldo" step="0.01" min="0"></label>
+      </div>
+      <div class="result total"><span>Pago mensual (total resto / 24)</span><strong id="restoCuota">0,00 €</strong></div>
+      <div class="table-wrap tall">
+        <table class="amort">
+          <thead>
+            <tr><th>Nº</th><th>Fecha</th><th>Pago</th><th>Sueldo Sandra</th><th>Sueldo Felipe</th><th>Acarreo Sandra</th><th>Acarreo Felipe</th><th>Acarreo total</th><th>Pendiente</th></tr>
+          </thead>
+          <tbody id="restoBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 4. CÁLCULOS -->
+    <section class="card wide">
+      <h2><span class="num">4</span> Hipoteca</h2>
+      <div class="fields four">
+        <label>Importe (€)
+          <input type="number" id="hipImporte" step="0.01" min="0">
+        </label>
+        <label>Interés anual (%) <input type="number" id="hipInteres" step="0.01" min="0" value="3"></label>
+        <label>Tiempo (años) <input type="number" id="hipAnios" step="1" min="1" value="25"></label>
+        <label>Primer pago <input type="date" id="hipInicio"></label>
+      </div>
+      <div class="actions">
+        <button type="button" id="btnAuto" class="btn">Importe = Total piso − pagos iniciales</button>
+        <button type="button" id="btnReset" class="btn ghost">Borrar todo</button>
+      </div>
+      <div class="result total"><span>Importe mensual</span><strong id="cuota">0,00 €</strong></div>
+      <div class="result"><span>Total intereses</span><strong id="totalIntereses">0,00 €</strong></div>
+      <div class="result"><span>Total a devolver</span><strong id="totalDevolver">0,00 €</strong></div>
+    </section>
+
+    <!-- TABLA MENSUAL -->
+    <section class="card wide">
+      <h2>Cuadro de amortización</h2>
+      <div class="table-wrap tall">
+        <table class="amort">
+          <thead>
+            <tr><th>Nº</th><th>Fecha</th><th>Cuota</th><th>Intereses</th><th>Capital</th><th>Pendiente</th></tr>
+          </thead>
+          <tbody id="amortBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="js/storage.js"></script>
+  <script src="js/calculos.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
