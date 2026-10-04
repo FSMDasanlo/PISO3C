@@ -15,7 +15,7 @@
   <main class="grid">
 
     <!-- 1. DATOS PISO -->
-    <section class="card">
+    <section class="card initial-card">
       <h2><span class="num">1</span> Datos del piso</h2>
       <div class="fields two">
         <label>Planta <input type="text" id="planta" placeholder="3"></label>
@@ -28,9 +28,9 @@
     </section>
 
     <!-- 2. ORIGEN DINERO -->
-    <section class="card">
+    <section class="card initial-card">
       <h2><span class="num">2</span> Origen del dinero</h2>
-      <div class="fields">
+      <div class="fields initial-three">
         <label>Familia (€) <input type="number" id="familia" step="0.01" min="0"></label>
         <label>Sandra (€) <input type="number" id="sandra" step="0.01" min="0"></label>
         <label>Felipe (€) <input type="number" id="felipe" step="0.01" min="0"></label>
@@ -84,17 +84,19 @@
     <!-- 3b. RESTO 24 MESES -->
     <section class="card wide">
       <h2><span class="num">3</span> Resto 2 años: 24 pagos mensuales</h2>
-      <div class="fields two">
+      <div class="fields contributions">
         <label>Ahorro de Sandra para este pago (€) <input type="number" id="sandraAhorro" step="0.01" min="0"></label>
-        <label>Sueldo mensual de Sandra (€) <input type="number" id="sandraSueldo" step="0.01" min="0"></label>
+        <label>Aportación mensual de Sandra (€) <input type="number" id="sandraSueldo" step="0.01" min="0"></label>
+        <label>Inicio de aportación de Sandra <input type="date" id="sandraInicio"></label>
         <label>Ahorro de Felipe para este pago (€) <input type="number" id="felipeAhorro" step="0.01" min="0"></label>
-        <label>Sueldo mensual de Felipe (€) <input type="number" id="felipeSueldo" step="0.01" min="0"></label>
+        <label>Aportación mensual de Felipe (€) <input type="number" id="felipeSueldo" step="0.01" min="0"></label>
+        <label>Inicio de aportación de Felipe <input type="date" id="felipeInicio"></label>
       </div>
       <div class="result total"><span>Pago mensual (total resto / 24)</span><strong id="restoCuota">0,00 €</strong></div>
       <div class="table-wrap tall">
         <table class="amort">
           <thead>
-            <tr><th>Nº</th><th>Fecha</th><th>Pago realizado</th><th>Sueldo Sandra</th><th>Sueldo Felipe</th><th>Acarreo Sandra</th><th>Acarreo Felipe</th><th>Acarreo total</th><th>Pendiente</th></tr>
+            <tr><th>Nº</th><th>Fecha</th><th>Pago realizado</th><th>Aportación de Sandra</th><th>Aportación de Felipe</th><th>Acarreo Sandra</th><th>Acarreo Felipe</th><th>Acarreo total</th><th>Pendiente</th></tr>
           </thead>
           <tbody id="restoBody"></tbody>
         </table>

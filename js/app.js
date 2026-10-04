@@ -1,6 +1,6 @@
 const $ = (id) => document.getElementById(id);
 const simples = ["planta", "bloque", "liquido", "ivaPiso", "familia", "sandra", "felipe",
-  "sandraAhorro", "sandraSueldo", "felipeAhorro", "felipeSueldo",
+  "sandraAhorro", "sandraSueldo", "sandraInicio", "felipeAhorro", "felipeSueldo", "felipeInicio",
   "hipImporte", "hipInteres", "hipAnios", "hipInicio"];
 const pagoKeys = ["arras", "entrada", "resto"];
 
@@ -40,6 +40,8 @@ function actualizarResto(totalResto) {
   const cuota = totalResto / N;
   const sueldoS = Calc.num($("sandraSueldo").value);
   const sueldoF = Calc.num($("felipeSueldo").value);
+  const inicioS = $("sandraInicio").value;
+  const inicioF = $("felipeInicio").value;
   const inicio = document.querySelector('tr[data-pago="resto"] [data-f="fecha"]').value;
   // El pago se reparte a partes iguales entre los dos
   let acarreoS = Calc.num($("sandraAhorro").value);
@@ -49,8 +51,15 @@ function actualizarResto(totalResto) {
   const clase = (v) => (v >= 0 ? "pos" : "neg");
 
   for (let k = 1; k <= N; k++) {
-    const disponibleS = Math.max(0, acarreoS + sueldoS);
-    const disponibleF = Math.max(0, acarreoF + sueldoF);
+    let fechaMes = null;
+    if (inicio) {
+      fechaMes = new Date(inicio + "T00:00:00");
+      fechaMes.setMonth(fechaMes.getMonth() + k - 1);
+    }
+    const contribS = !inicioS || (fechaMes && fechaMes >= new Date(inicioS + "T00:00:00")) ? sueldoS : 0;
+    const contribF = !inicioF || (fechaMes && fechaMes >= new Date(inicioF + "T00:00:00")) ? sueldoF : 0;
+    const disponibleS = Math.max(0, acarreoS + contribS);
+    const disponibleF = Math.max(0, acarreoF + contribF);
     const disponibleTotal = disponibleS + disponibleF;
     const pagoMes = Math.min(cuota, disponibleTotal);
     const aporteS = disponibleTotal ? pagoMes * disponibleS / disponibleTotal : 0;
@@ -58,13 +67,8 @@ function actualizarResto(totalResto) {
     acarreoS = Math.max(0, disponibleS - aporteS);
     acarreoF = Math.max(0, disponibleF - aporteF);
     pendiente = Math.max(0, pendiente - pagoMes);
-    let fecha = "";
-    if (inicio) {
-      const d = new Date(inicio + "T00:00:00");
-      d.setMonth(d.getMonth() + k - 1);
-      fecha = d.toLocaleDateString("es-ES", { month: "short", year: "numeric" });
-    }
-    html += `<tr><td>${k}</td><td>${fecha}</td><td>${Calc.eur(pagoMes)}</td><td>${Calc.eur(sueldoS)}</td><td>${Calc.eur(sueldoF)}</td>
+    const fecha = fechaMes ? fechaMes.toLocaleDateString("es-ES", { month: "short", year: "numeric" }) : "";
+    html += `<tr><td>${k}</td><td>${fecha}</td><td>${Calc.eur(pagoMes)}</td><td>${Calc.eur(contribS)}</td><td>${Calc.eur(contribF)}</td>
       <td class="${clase(acarreoS)}">${Calc.eur(acarreoS)}</td>
       <td class="${clase(acarreoF)}">${Calc.eur(acarreoF)}</td>
       <td class="${clase(acarreoS + acarreoF)}">${Calc.eur(acarreoS + acarreoF)}</td>
