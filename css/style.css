@@ -44,6 +44,8 @@ body {
 .initial-card { padding: 1.1rem; }
 .initial-card h2 { margin-bottom: .85rem; }
 .initial-card .fields { gap: .65rem; margin-bottom: .75rem; }
+.promo-card img { display: block; width: 100%; height: auto; border-radius: 8px; margin-bottom: .75rem; }
+.promo-card a { overflow-wrap: anywhere; }
 .fields.initial-three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .card h2 {
   margin: 0 0 1.25rem;
